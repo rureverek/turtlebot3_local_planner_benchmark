@@ -9,7 +9,7 @@ Known bug: if robot is not moving try to launch simulation again.
 
 <launch>
   <arg name="model" default="$(env TURTLEBOT3_MODEL)" doc="model type [burger, waffle, waffle_pi]"/>
-  <arg name="scenario" default="Static" doc="scenario type [Static, Dynamic_simple, Dynamic_complex, Maze]"/>
+  <arg name="scenario" default="Static" doc="scenario type [Static, Dynamic_simple, Dynamic_complex, Maze, Narrow]"/>
   <arg name="world" default="$(find turtlebot3_local_planner_sim)/worlds/$(arg scenario)/world.model"/>
 
 <!-- Static Scenario position init -->
