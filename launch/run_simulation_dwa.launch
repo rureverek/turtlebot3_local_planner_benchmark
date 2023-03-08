@@ -9,7 +9,7 @@ Known bug: if robot is not moving try to launch simulation again.
 
 <launch>
   <arg name="model" default="$(env TURTLEBOT3_MODEL)" doc="model type [burger, waffle, waffle_pi]"/>
-  <arg name="scenario" default="Static" doc="scenario type [Static, Dynamic_simple, Dynamic_complex, Maze, Narrow]"/>
+  <arg name="scenario" default="Static" doc="scenario type [Static, Dynamic_simple, Dynamic_complex, Maze, Narrow, House, Track]"/>
   <arg name="world" default="$(find turtlebot3_local_planner_sim)/worlds/$(arg scenario)/world.model"/>
 
 <!-- Static Scenario position init -->
@@ -46,6 +46,20 @@ Known bug: if robot is not moving try to launch simulation again.
   <arg name="z_pos_init" default="0.0" unless="$(eval scenario != 'Narrow')"/>
   <arg name="x_pos_nav" default="4.564" unless="$(eval scenario != 'Narrow')"/>
   <arg name="y_pos_nav" default="-0.358" unless="$(eval scenario != 'Narrow')"/>
+
+<!-- House Scenario position init -->
+  <arg name="x_pos_init" default="-4.571" unless="$(eval scenario != 'House')"/>
+  <arg name="y_pos_init" default="5.013" unless="$(eval scenario != 'House')"/>
+  <arg name="z_pos_init" default="0.0" unless="$(eval scenario != 'House')"/>
+  <arg name="x_pos_nav" default="5.618" unless="$(eval scenario != 'House')"/>
+  <arg name="y_pos_nav" default="-5.482" unless="$(eval scenario != 'House')"/>  
+
+<!-- Track Scenario position init -->
+  <arg name="x_pos_init" default="-6.202" unless="$(eval scenario != 'Track')"/>
+  <arg name="y_pos_init" default="4.519" unless="$(eval scenario != 'Track')"/>
+  <arg name="z_pos_init" default="0.0" unless="$(eval scenario != 'Track')"/>
+  <arg name="x_pos_nav" default="-6.413" unless="$(eval scenario != 'Track')"/>
+  <arg name="y_pos_nav" default="-10.152" unless="$(eval scenario != 'Track')"/>  
 
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
     <arg name="world_name" value="$(arg world)"/>
