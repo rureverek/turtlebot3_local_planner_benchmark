@@ -9,7 +9,7 @@ Known bug: if robot is not moving try to launch simulation again.
 
 <launch>
   <arg name="model" default="$(env TURTLEBOT3_MODEL)" doc="model type [burger, waffle, waffle_pi]"/>
-  <arg name="scenario" default="Static" doc="scenario type [Static, Dynamic_simple, Dynamic_complex, Maze, Narrow, House, Track]"/>
+  <arg name="scenario" default="Static" doc="scenario type [Static, Dynamic_simple, Dynamic_complex, Maze, Narrow, House, Track, Big_house, Big_house_part_unknown, Random]"/>
   <arg name="world" default="$(find turtlebot3_local_planner_sim)/worlds/$(arg scenario)/world.model"/>
 
 <!-- Static Scenario position init -->
@@ -60,6 +60,28 @@ Known bug: if robot is not moving try to launch simulation again.
   <arg name="z_pos_init" default="0.0" unless="$(eval scenario != 'Track')"/>
   <arg name="x_pos_nav" default="-6.413" unless="$(eval scenario != 'Track')"/>
   <arg name="y_pos_nav" default="-10.152" unless="$(eval scenario != 'Track')"/>  
+
+<!-- Big_house Scenario position init -->
+  <arg name="x_pos_init" default="-12.547" unless="$(eval scenario != 'Big_house')"/>
+  <arg name="y_pos_init" default="8.542" unless="$(eval scenario != 'Big_house')"/>
+  <arg name="z_pos_init" default="0.0" unless="$(eval scenario != 'Big_house')"/>
+  <arg name="x_pos_nav" default="13.059" unless="$(eval scenario != 'Big_house')"/>
+  <arg name="y_pos_nav" default="1.702" unless="$(eval scenario != 'Big_house')"/>  
+
+<!-- Big_house_part_unknown Scenario position init -->
+  <arg name="x_pos_init" default="-12.775" unless="$(eval scenario != 'Big_house_part_unknown')"/>
+  <arg name="y_pos_init" default="-5.447" unless="$(eval scenario != 'Big_house_part_unknown')"/>
+  <arg name="z_pos_init" default="0.0" unless="$(eval scenario != 'Big_house_part_unknown')"/>
+  <arg name="x_pos_nav" default="4.052" unless="$(eval scenario != 'Big_house_part_unknown')"/>
+  <arg name="y_pos_nav" default="-2.671" unless="$(eval scenario != 'Big_house_part_unknown')"/>  
+
+<!-- Random Scenario position init -->
+  <arg name="x_pos_init" default="0.0" unless="$(eval scenario != 'Random')"/>
+  <arg name="y_pos_init" default="0.0" unless="$(eval scenario != 'Random')"/>
+  <arg name="z_pos_init" default="0.0" unless="$(eval scenario != 'Random')"/>
+  <arg name="x_pos_nav" default="5.0" unless="$(eval scenario != 'Random')"/>
+  <arg name="y_pos_nav" default="0.0" unless="$(eval scenario != 'Random')"/>  
+
 
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
     <arg name="world_name" value="$(arg world)"/>
