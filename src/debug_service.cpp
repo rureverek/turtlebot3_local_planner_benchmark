@@ -9,7 +9,6 @@
 #include <fstream>
 #include <vector>
 #include <tf/tf.h>
-//#include <pair>
 
 using namespace std;
 
@@ -26,18 +25,21 @@ Update global struct and print at the end of simulation (after global plan coord
 struct data {
 
   geometry_msgs::Point position_cur;
-  float travelled_path = 0;
-  float global_plan_length = 0;
+  double travelled_path = 0;
+  double global_plan_length = 0;
   bool is_goal_reached = 0;
   bool is_goal_set = 0;
   vector<pair<float,float>> GlobalPlan;
-  float OdomFluctuationRatio = 0;
+  double OdomFluctuationRatio = 0;
   int odomCounter = 0;
+  double velocity_sum = 0;
+  double velocity_smoothness = 0;
 
 } dataFile;
 
 geometry_msgs::Point position_old;
 double yaw_old = 0;
+ros::Time time_prev(0);
 float fluctuation_sum = 0;
 bool global_path_init = 0;
 fstream fs;
@@ -104,12 +106,33 @@ void calculate_travelled_path(const nav_msgs::Odometry &msg){
   geometry_msgs::Quaternion orientation_cur = msg.pose.pose.orientation;
   dataFile.position_cur = position_cur;
   double yaw_cur = tf::getYaw(msg.pose.pose.orientation);
-
+  float delta_x = 0;
+  float delta_v = 0;
+  
+  double delta_time = 0;
   /* Wait for first odom data sample to be fetched */
+
+
 
   if(dataFile.odomCounter != 0){
 
-  if(position_old != position_cur)dataFile.travelled_path += sqrt(pow((position_old.x - position_cur.x),2) + pow((position_old.y - position_cur.y), 2));
+    
+  if(position_old != position_cur)
+  {
+    /* Calculate total travelled path length */
+    delta_x = sqrt(pow((position_old.x - position_cur.x),2) + pow((position_old.y - position_cur.y), 2));
+    dataFile.travelled_path += delta_x;
+
+    /* Calculate velocity smoothness */
+    ros::Time time_cur = ros::Time().now();
+    delta_time = time_cur.toSec() - time_prev.toSec();
+    time_prev = time_cur;
+    if(delta_time != 0)
+    {
+      delta_v = delta_x / delta_time;
+      dataFile.velocity_sum += delta_v;
+    }
+  }
 
   /*
   Real Fluctuation Ratio Calculation
@@ -122,7 +145,11 @@ position_old = position_cur;
 yaw_old = yaw_cur;
 
 /* Don't divide by zero! */
-if(dataFile.travelled_path != 0)dataFile.OdomFluctuationRatio = fluctuation_sum / dataFile.travelled_path;
+if(dataFile.travelled_path != 0)
+{
+  dataFile.OdomFluctuationRatio = fluctuation_sum / dataFile.travelled_path;
+  dataFile.velocity_smoothness = dataFile.velocity_sum / dataFile.travelled_path;
+}
 
 dataFile.odomCounter++;
 }
