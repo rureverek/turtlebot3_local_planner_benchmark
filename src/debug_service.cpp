@@ -1,6 +1,7 @@
 #include "ros/ros.h"
 #include "nav_msgs/Odometry.h"
 #include "geometry_msgs/PoseWithCovariance.h"
+#include "sensor_msgs/LaserScan.h"
 #include "nav_msgs/Path.h"
 #include "geometry_msgs/PoseStamped.h"
 #include "geometry_msgs/Point.h"
@@ -34,6 +35,7 @@ struct data {
   int odomCounter = 0;
   double velocity_sum = 0;
   double velocity_smoothness = 0;
+  double minimum_distance = 3.5;
 
 } dataFile;
 
@@ -203,6 +205,20 @@ if(!global_path_init){
 
 }
 
+void get_minimum_distance(const sensor_msgs::LaserScan &msg){
+    double min = dataFile.minimum_distance;
+
+    for(int i = 0; i < 360; i++)
+    {
+      if(min > msg.ranges[i])
+      {
+        min = msg.ranges[i];
+      }
+    }
+
+    dataFile.minimum_distance = min;
+}
+
 /* --------- Main Application ---------*/
 
 int main(int argc, char **argv)
@@ -225,6 +241,9 @@ int main(int argc, char **argv)
 
 /* Goal Status sub */
   ros::Subscriber sub3 = n.subscribe("move_base/status", 100, &getGoalStatus);
+
+/* Laser Scan sub */
+  ros::Subscriber sub4 = n.subscribe("scan", 500, &get_minimum_distance);
 
   ROS_INFO("Debug service is running!");
 
