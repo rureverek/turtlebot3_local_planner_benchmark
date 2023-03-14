@@ -28,6 +28,7 @@ struct data {
   geometry_msgs::Point position_cur;
   double travelled_path = 0;
   double global_plan_length = 0;
+  double global_plan_length_init = 0;
   bool is_goal_reached = 0;
   bool is_goal_set = 0;
   vector<pair<float,float>> GlobalPlan;
@@ -36,7 +37,7 @@ struct data {
   double velocity_sum = 0;
   double velocity_smoothness = 0;
   double minimum_distance = 3.5;
-
+  double close_obstacle_counter = 0;
 } dataFile;
 
 geometry_msgs::Point position_old;
@@ -45,7 +46,26 @@ ros::Time time_prev(0);
 float fluctuation_sum = 0;
 bool global_path_init = 0;
 fstream fs;
+fstream summary;
 bool is_goal_reached = 0;
+
+
+void print_summary(){
+
+    summary.open("summary.txt", fstream::in | fstream::out | fstream::app); //This is generated in dir: ./.ros/
+    summary << "SUMMARY: " << endl;
+    summary << "Efficiency: " << endl;
+    summary << " - Travelled Path: " << dataFile.travelled_path << endl;
+    summary << " - Planned Path (Global Planner): " << dataFile.global_plan_length_init << endl;
+    summary << "Smoothness: " << endl;
+    summary << " - Fluctuation Ratio: " << dataFile.OdomFluctuationRatio << endl;
+    summary << " - Velocity Smoothness: " << dataFile.velocity_smoothness << endl;
+    summary << "Safety: " << endl;
+    summary << " - Minimal distance to obstacle: " << dataFile.minimum_distance << endl;
+    summary << " - Number of LaserScan readings below threshold (0.2m): " << dataFile.close_obstacle_counter << endl;
+    summary.close();
+
+}
 
 /* Goal Status Subscriber Function */
 
@@ -70,6 +90,8 @@ switch (msg.status_list[0].status) {
 
     }
     fs.close();
+
+    //print_summary();
   }
 
   ros::shutdown();
@@ -93,6 +115,9 @@ switch (msg.status_list[0].status) {
 
   fs << "ABORTED!";
   fs.close();
+
+  //print_summary();
+
   ros::shutdown();
   break;
 
@@ -113,8 +138,6 @@ void calculate_travelled_path(const nav_msgs::Odometry &msg){
   
   double delta_time = 0;
   /* Wait for first odom data sample to be fetched */
-
-
 
   if(dataFile.odomCounter != 0){
 
@@ -201,18 +224,25 @@ if(!global_path_init){
     w.push_back(p);
   }
   dataFile.GlobalPlan = w;
+  dataFile.global_plan_length_init = sum;
 }
 
 }
 
 void get_minimum_distance(const sensor_msgs::LaserScan &msg){
     double min = dataFile.minimum_distance;
+    bool counter_flag = false;
 
     for(int i = 0; i < 360; i++)
     {
       if(min > msg.ranges[i])
       {
         min = msg.ranges[i];
+      }
+      if(msg.ranges[i] < 0.2 && !counter_flag)
+      {
+        dataFile.close_obstacle_counter++;
+        counter_flag = true;
       }
     }
 
@@ -226,7 +256,10 @@ int main(int argc, char **argv)
 
   /* Initialise output file stream */
   fs.open ("coords.txt", fstream::in | fstream::out | fstream::trunc);
-  fs << "id;time;x_odom;y_odom;fr_odom;travelled_path;global_plan_length;global_plan_fr" << endl;
+  summary.open ("summary.txt", fstream::in | fstream::out | fstream::trunc);
+  summary.close();
+  //fs << "id;time;x_odom;y_odom;fr_odom;travelled_path;global_plan_length;global_plan_fr" << endl;
+  fs << "id;time;x_odom;y_odom;" << endl;
   fs.close();
 
   ros::init(argc, argv, "debug_service");
@@ -255,13 +288,16 @@ while (ros::ok()){
   if(dataFile.is_goal_set == 1){
   counter++;
   fs.open ("coords.txt", fstream::in | fstream::out | fstream::app);
-  fs << counter << ";" << ros::Time::now() << ";" << dataFile.position_cur.x << ";" << dataFile.position_cur.y << ";" << dataFile.OdomFluctuationRatio << ";" << dataFile.travelled_path << ";" << dataFile.global_plan_length << endl;
+  //fs << counter << ";" << ros::Time::now() << ";" << dataFile.position_cur.x << ";" << dataFile.position_cur.y << ";" << dataFile.OdomFluctuationRatio << ";" << dataFile.travelled_path << ";" << dataFile.global_plan_length << endl;
+  fs << counter << ";" << ros::Time::now() << ";" << dataFile.position_cur.x << ";" << dataFile.position_cur.y << ";" << endl;
   fs.close();
   }
 
   ros::spinOnce();
   loop_rate.sleep();
 }
+
+print_summary(); /* Print summary before exit */
 
 return 0;
 }

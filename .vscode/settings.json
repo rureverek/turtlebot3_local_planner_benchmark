@@ -6,6 +6,8 @@
     "files.associations": {
         "*.model": "xml",
         "cmath": "cpp",
-        "complex": "cpp"
+        "complex": "cpp",
+        "iosfwd": "cpp",
+        "ostream": "cpp"
     }
 }
