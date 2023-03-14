@@ -86,7 +86,7 @@ Known bug: if robot is not moving try to launch simulation again.
     <arg name="world_name" value="$(arg world)"/>
     <arg name="paused" value="false"/>
     <arg name="use_sim_time" value="true"/>
-    <arg name="gui" value="true"/>
+    <arg name="gui" value="false"/>
     <arg name="headless" value="false"/>
     <arg name="debug" value="false"/>
   </include>
@@ -96,12 +96,12 @@ Known bug: if robot is not moving try to launch simulation again.
 
   <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-urdf -model turtlebot3 -x $(arg x_pos_init) -y $(arg y_pos_init) -z $(arg z_pos_init) -param robot_description" />
 
-<!-- Sleep 3 "Laser scan node executed" -->
+<!-- Sleep 3 "Laser scan node executed" 
   <arg name="sim_node_start_delay" default="3.0" />  
 
   <node name="scan_to_scan_filter_chain" pkg="laser_filters" type="scan_to_scan_filter_chain" launch-prefix="bash -c 'sleep $(arg sim_node_start_delay); $0 $@' ">
     <rosparam file="$(find turtlebot3_local_planner_sim)/param/my_laser_config.yaml" command="load"/>
-  </node>
+  </node>-->
 
 <!-- Sleep 1 "Navigation node executed" -->
   <include file="$(find turtlebot3_local_planner_sim)/launch/turtlebot3_navigation.launch" >

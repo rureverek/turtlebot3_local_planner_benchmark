@@ -2,5 +2,12 @@
     "python.autoComplete.extraPaths": [
         "/home/piotr/catkin_ws/devel/lib/python3/dist-packages",
         "/opt/ros/noetic/lib/python3/dist-packages"
-    ]
+    ],
+    "files.associations": {
+        "*.model": "xml",
+        "cmath": "cpp",
+        "complex": "cpp",
+        "iosfwd": "cpp",
+        "ostream": "cpp"
+    }
 }
