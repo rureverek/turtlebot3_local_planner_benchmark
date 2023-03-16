@@ -42,7 +42,7 @@ DWAPlannerROS:
 # Potential field Parameters
   goal_distance_bias: 10.0
   obstacle_field_scale: 0.4
-  potential_planner: True
+  potential_planner: False
 
 # Oscillation Prevention Parameters
   oscillation_reset_dist: 0.05

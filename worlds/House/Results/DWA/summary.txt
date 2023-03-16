@@ -1,0 +1,10 @@
+SUMMARY: 
+Efficiency: 
+ - Travelled Path: 18.6025
+ - Planned Path (Global Planner): 18.9909
+Smoothness: 
+ - Fluctuation Ratio: 1.07175
+ - Velocity Smoothness: 12.6178
+Safety: 
+ - Minimal distance to obstacle: 0.238728
+ - Number of LaserScan readings below threshold (0.2m): 0

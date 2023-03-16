@@ -2,6 +2,7 @@ always_send_full_costmap: true
 
 #footprint: [[-0.205, -0.155], [-0.205, 0.155], [0.077, 0.155], [0.077, -0.155]]
 robot_radius: 0.20
+transform_tolerance: 0.2
 
 obstacle_layer:
   enabled: true
@@ -9,7 +10,7 @@ obstacle_layer:
   raytrace_range: 2.0
   combination_method: 1
   observation_sources: scan
-  track_unknown_space: true
+#  track_unknown_space: false
   scan: {sensor_frame: base_scan, data_type: LaserScan, topic: scan, marking: true, clearing: true, inf_is_valid: true}
 
 inflation_layer:
