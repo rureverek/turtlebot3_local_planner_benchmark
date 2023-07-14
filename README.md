@@ -6,6 +6,12 @@
 - Ubuntu 20.04
 - [Modified Navigation package](https://github.com/rureverek/navigation/tree/potential_field) for potential field planner
 
+alternative: use provided [Docker Image](https://hub.docker.com/r/piotrmik/test):
+```sh
+docker pull piotrmik/test
+docker run -it --env="DISPLAY=host.docker.internal:0.0" --env="scenario=<>" piotrmik/test
+```
+
 # Build and installation
 
 If the requirements are met, jump to [Install package](#install-package).
